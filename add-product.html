@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Luggage Co. — Add Product</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --ink: #1a1a18;
+      --muted: #8a8880;
+      --accent: #c8a96e;
+      --border: #e4e0d8;
+      --border-focus: #c8a96e;
+      --error: #b94a48;
+      --success: #3a7d44;
+      --radius: 4px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .logo span { color: var(--accent); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 2.5rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    nav a { text-decoration: none; color: inherit; transition: color 0.2s; }
+    nav a:hover { color: var(--ink); }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: none;
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-back:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .btn-back svg {
+      width: 11px;
+      height: 11px;
+      flex-shrink: 0;
+    }
+
+    /* ── Page Hero ── */
+    .page-hero {
+      padding: 4rem 4rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 4vw, 3.8rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+
+    .page-hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .page-hero p {
+      margin-top: 1rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      max-width: 44ch;
+      line-height: 1.7;
+    }
+
+    /* ── Form Layout ── */
+    .form-wrapper {
+      flex: 1;
+      padding: 3rem 4rem 5rem;
+      max-width: 860px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem 3rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .field.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    label .required-mark {
+      color: var(--accent);
+      margin-left: 0.2rem;
+    }
+
+    .field-hint {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      line-height: 1.5;
+      margin-top: -0.2rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="url"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.12);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #c8c4bc;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Select arrow */
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap select {
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--muted);
+      pointer-events: none;
+    }
+
+    /* ── Color Swatches Input ── */
+    .swatch-builder {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .swatch-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .swatch-preview {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      flex-wrap: wrap;
+      min-height: 20px;
+    }
+
+    .swatch-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.12);
+      flex-shrink: 0;
+    }
+
+    .color-input-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      width: 40px;
+      height: 36px;
+      padding: 2px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .btn-add-color {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .btn-add-color:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+
+    .btn-remove-color {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .btn-remove-color:hover { color: var(--error); }
+
+    /* Hidden field that stores comma-separated hex values */
+    #colors-hidden { display: none; }
+
+    /* ── Divider ── */
+    .form-section-label {
+      grid-column: 1 / -1;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+
+    /* ── Submit ── */
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-submit {
+      background: var(--ink);
+      color: #fff;
+      border: 1px solid var(--ink);
+      padding: 0.75rem 2.5rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      flex-shrink: 0;
+      display: none;
+    }
+
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-text { opacity: 0.7; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn-cancel {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .btn-cancel:hover { color: var(--ink); }
+
+    /* ── Success overlay ── */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .success-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .success-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+    }
+
+    .success-body {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    .success-redirect {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* ── Error banner ── */
+    .error-banner {
+      grid-column: 1 / -1;
+      background: #fdf1f1;
+      border: 1px solid #f0c4c4;
+      color: var(--error);
+      padding: 0.85rem 1.1rem;
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .error-banner.visible { display: block; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2.5rem 4rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    @media (max-width: 700px) {
+      header, .page-hero, .form-wrapper { padding-left: 1.5rem; padding-right: 1.5rem; }
+      nav { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full-width { grid-column: 1; }
+      .form-section-label { grid-column: 1; }
+      .form-actions { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<header>
+  <a href="index.html" class="logo">Luggage<span>.</span>Co</a>
+  <div class="header-right">
+    <nav>
+      <a href="index.html">Collection</a>
+      <a href="#">About</a>
+      <a href="#">Stores</a>
+      <a href="#">Cart (0)</a>
+    </nav>
+    <a href="index.html" class="btn-back">
+      <svg viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M7 1.5L3 5.5L7 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+  </div>
+</header>
+
+<!-- ── Page Hero ───────────────────────────────────────────────────────── -->
+<section class="page-hero">
+  <h1>Add a <em>Product</em></h1>
+  <p>Fill in the details below to add a new item to the collection. All fields marked with <span style="color:var(--accent)">✦</span> are required.</p>
+</section>
+
+<!-- ── Form ───────────────────────────────────────────────────────────── -->
+<div class="form-wrapper">
+  <div class="form-grid" id="product-form">
+
+    <span class="form-section-label">Core Details</span>
+
+    <!-- Name -->
+    <div class="field">
+      <label for="field-name">Product Name <span class="required-mark">✦</span></label>
+      <input type="text" id="field-name" name="name" placeholder="e.g. Grand Voyager Trunk" autocomplete="off" required />
+    </div>
+
+    <!-- Category -->
+    <div class="field">
+      <label for="field-category">Category <span class="required-mark">✦</span></label>
+      <div class="select-wrap">
+        <select id="field-category" name="category" required>
+          <option value="" disabled selected>Select a category…</option>
+          <option value="Carry-On">Carry-On</option>
+          <option value="Check-In">Check-In</option>
+          <option value="Trunk">Trunk</option>
+          <option value="Duffle">Duffle</option>
+          <option value="Backpack">Backpack</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Sub / Description -->
+    <div class="field full-width">
+      <label for="field-sub">Subtitle / Short Description</label>
+      <input type="text" id="field-sub" name="sub" placeholder="e.g. Polycarbonate shell · TSA-approved lock" autocomplete="off" />
+      <span class="field-hint">Appears below the product name on the card. Keep it short — one line.</span>
+    </div>
+
+    <span class="form-section-label">Pricing & Availability</span>
+
+    <!-- Price -->
+    <div class="field">
+      <label for="field-price">Price <span class="required-mark">✦</span></label>
+      <input type="number" id="field-price" name="price" placeholder="e.g. 349" min="0" step="0.01" />
+      <span class="field-hint">Enter a number only — the $ sign is added automatically.</span>
+    </div>
+
+    <!-- Badge -->
+    <div class="field">
+      <label for="field-badge">Badge Label</label>
+      <div class="select-wrap">
+        <select id="field-badge" name="badge">
+          <option value="">None</option>
+          <option value="New">New</option>
+          <option value="Sale">Sale</option>
+          <option value="Limited">Limited</option>
+          <option value="Best Seller">Best Seller</option>
+        </select>
+      </div>
+      <span class="field-hint">"New" badge appears in gold; others appear in dark ink.</span>
+    </div>
+
+    <span class="form-section-label">Media</span>
+
+    <!-- Image URL -->
+    <div class="field full-width">
+      <label for="field-img-src">Product Image URL <span class="required-mark">✦</span></label>
+      <input type="url" id="field-img-src" name="img_src" placeholder="https://…" autocomplete="off" />
+      <span class="field-hint">Direct link to a product image (JPEG, PNG, or WebP). Must be publicly accessible.</span>
+    </div>
+
+    <span class="form-section-label">Color Options</span>
+
+    <!-- Colors -->
+    <div class="field full-width">
+      <label>Color Swatches</label>
+      <div class="swatch-builder">
+        <div class="color-input-row">
+          <input type="color" id="color-picker" value="#c8a96e" title="Pick a color" />
+          <button type="button" class="btn-add-color" id="btn-add-color">+ Add Color</button>
+        </div>
+        <div class="swatch-preview" id="swatch-preview" aria-label="Added colors"></div>
+        <input type="hidden" id="colors-hidden" name="colors" value="" />
+      </div>
+      <span class="field-hint">Pick a color and click Add Color. These appear as swatches on the product card. Leave empty for no swatches.</span>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner" id="error-banner" role="alert"></div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn-submit" id="btn-submit">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-text">Submit Product</span>
+      </button>
+      <a href="index.html" class="btn-cancel">Cancel</a>
+    </div>
+
+  </div><!-- /form-grid -->
+</div><!-- /form-wrapper -->
+
+<footer>
+  © 2026 Luggage Co. — Free shipping on orders over $200
+</footer>
+
+<!-- ── Success Overlay ─────────────────────────────────────────────────── -->
+<div class="success-overlay" id="success-overlay" aria-live="polite" aria-hidden="true">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>
+  <h2 class="success-title">Product Added</h2>
+  <p class="success-body">Your product has been sent to the sheet.<br>It will appear in the collection shortly.</p>
+  <p class="success-redirect" id="redirect-msg">Redirecting in 3…</p>
+</div>
+
+<script>
+  // ─── Config ───────────────────────────────────────────────────────────────
+  // Paste your deployed Google Apps Script Web App URL here:
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzZP3DbAQL63oRJIU8KaO4nSWdn1Dm9lD2NoeHd1H-e1uDVHnGgMLmxGyx8IwrR4L-L/exec";
+
+  // ─── Color swatch builder ─────────────────────────────────────────────────
+  const colorPicker   = document.getElementById('color-picker');
+  const btnAddColor   = document.getElementById('btn-add-color');
+  const swatchPreview = document.getElementById('swatch-preview');
+  const colorsHidden  = document.getElementById('colors-hidden');
+
+  let selectedColors = [];
+
+  function renderSwatches() {
+    swatchPreview.innerHTML = selectedColors.map((hex, i) => `
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-bottom:4px;">
+        <span class="swatch-dot" style="background:${hex}" title="${hex}"></span>
+        <span style="font-size:0.68rem;color:var(--muted);letter-spacing:0.06em">${hex}</span>
+        <button type="button" class="btn-remove-color" data-index="${i}" title="Remove" aria-label="Remove ${hex}">✕</button>
+      </span>
+    `).join('');
+
+    swatchPreview.querySelectorAll('.btn-remove-color').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedColors.splice(Number(btn.dataset.index), 1);
+        renderSwatches();
+        syncColorsHidden();
+      });
+    });
+  }
+
+  function syncColorsHidden() {
+    colorsHidden.value = selectedColors.join(',');
+  }
+
+  btnAddColor.addEventListener('click', () => {
+    const hex = colorPicker.value;
+    if (!selectedColors.includes(hex)) {
+      selectedColors.push(hex);
+      renderSwatches();
+      syncColorsHidden();
+    }
+  });
+
+  // ─── Validation ───────────────────────────────────────────────────────────
+  function getFieldValue(id) {
+    return document.getElementById(id).value.trim();
+  }
+
+  function showError(msg) {
+    const banner = document.getElementById('error-banner');
+    banner.textContent = msg;
+    banner.classList.add('visible');
+    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function clearError() {
+    document.getElementById('error-banner').classList.remove('visible');
+  }
+
+  function validate() {
+    const name     = getFieldValue('field-name');
+    const category = getFieldValue('field-category');
+    const price    = getFieldValue('field-price');
+    const imgSrc   = getFieldValue('field-img-src');
+
+    if (!name)     { showError('Please enter a product name.'); return false; }
+    if (!category) { showError('Please select a category.'); return false; }
+    if (!price)    { showError('Please enter a price.'); return false; }
+    if (isNaN(Number(price)) || Number(price) < 0) {
+      showError('Please enter a valid price (numbers only).'); return false;
+    }
+    if (!imgSrc)   { showError('Please provide an image URL.'); return false; }
+    try { new URL(imgSrc); } catch {
+      showError('Please enter a valid image URL (starting with https://).'); return false;
+    }
+
+    clearError();
+    return true;
+  }
+
+  // ─── Submit ───────────────────────────────────────────────────────────────
+  const btnSubmit = document.getElementById('btn-submit');
+
+  btnSubmit.addEventListener('click', async () => {
+    if (!validate()) return;
+
+    // Build payload — keys match the CSV column names used in index.html
+    const payload = {
+      name:     getFieldValue('field-name'),
+      category: getFieldValue('field-category'),
+      sub:      getFieldValue('field-sub'),
+      price:    getFieldValue('field-price'),
+      img_src:  getFieldValue('field-img-src'),
+      badge:    getFieldValue('field-badge'),
+      colors:   colorsHidden.value,
+    };
+
+    // Loading state
+    btnSubmit.disabled = true;
+    btnSubmit.classList.add('loading');
+    btnSubmit.querySelector('.btn-text').textContent = 'Submitting…';
+    clearError();
+
+    try {
+      // Build URL with query parameters
+      const url = new URL(WEB_APP_URL);
+      Object.entries(payload).forEach(([k, v]) => url.searchParams.set(k, v));
+
+      const res = await fetch(url.toString(), { method: 'GET' });
+
+      if (!res.ok) throw new Error(`Server responded with status ${res.status}`);
+
+      // Show success overlay
+      showSuccess();
+
+    } catch (err) {
+      console.error('Submission error:', err);
+      showError(
+        `Submission failed: ${err.message}. ` +
+        'Please check that WEB_APP_URL is configured correctly, ' +
+        'or try again in a moment.'
+      );
+      btnSubmit.disabled = false;
+      btnSubmit.classList.remove('loading');
+      btnSubmit.querySelector('.btn-text').textContent = 'Submit Product';
+    }
+  });
+
+  // ─── Success & redirect ───────────────────────────────────────────────────
+  function showSuccess() {
+    const overlay = document.getElementById('success-overlay');
+    overlay.classList.add('visible');
+    overlay.setAttribute('aria-hidden', 'false');
+
+    let count = 3;
+    const redirectMsg = document.getElementById('redirect-msg');
+
+    const interval = setInterval(() => {
+      count--;
+      if (count <= 0) {
+        clearInterval(interval);
+        redirectMsg.textContent = 'Redirecting…';
+        window.location.href = 'index.html';
+      } else {
+        redirectMsg.textContent = `Redirecting in ${count}…`;
+      }
+    }, 1000);
+  }
+</script>
+
+</body>
+</html>

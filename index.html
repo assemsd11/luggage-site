@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YHWH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFFFE0;
+      --surface: #ffffff;
+      --ink: #795c34;
+      --muted: #8a8880;
+      --accent: #b90e0a;
+      --border: #e4e0d8;
+      --radius: 4px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Times New Roman', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 2.5rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    nav a { text-decoration: none; color: inherit; transition: color 0.2s; }
+    nav a:hover { color: var(--ink); }
+
+    /* ── Enter Product Button ── */
+    .btn-enter-product {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--ink);
+      color: #fff;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.25rem;
+      border-radius: 2px;
+      border: 1px solid var(--ink);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-enter-product:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    .btn-enter-product svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+
+    /* ── Hero text ── */
+    .hero {
+      padding: 4rem 4rem 2rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .hero h1 {
+      font-family: 'Times New Roman', serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 500;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-meta {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 1.5rem 4rem;
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 0.4rem 1.1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.5s forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-img-wrap {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      background: #f0ede7;
+      position: relative;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: block;
+    }
+
+    .card:hover .card-img-wrap img {
+      transform: scale(1.04);
+    }
+
+    /* Badge */
+    .badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 2px;
+    }
+
+    .badge.new { background: var(--accent); color: var(--ink); }
+
+    /* Quick add hover overlay */
+    .card-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1rem;
+      background: linear-gradient(transparent, rgba(26,26,24,0.6));
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card:hover .card-overlay { opacity: 1; }
+
+    .quick-add {
+      background: #fff;
+      color: var(--ink);
+      border: none;
+      padding: 0.55rem 1.5rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+
+    .quick-add:hover { background: var(--accent); }
+
+    .card-info {
+      padding: 1.2rem 1.4rem 1.6rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .card-category {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .card-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 0.9rem;
+    }
+
+    .card-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .card-colors {
+      display: flex;
+      gap: 5px;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+
+    /* ── Loading / Error states ── */
+    .state-msg {
+      grid-column: 1 / -1;
+      padding: 4rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 3rem 4rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 1px;
+    }
+
+    @media (max-width: 700px) {
+      header, .hero, .filter-bar { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .hero-meta { text-align: left; }
+      nav { display: none; }
+      .btn-enter-product span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">YHWH<span></span></div>
+  <div class="header-right">
+    <nav>
+      <a href="#">Categories</a>
+      <a href="#">Popular</a>
+      <a href="#">About us</a>
+      <a href="#">Sign in</a>
+    </nav>
+    <a href="add-product.html" class="btn-enter-product">
+      <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>My Cart</span>
+    </a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1><em>I am</em> Who I am</h1>
+  <div class="hero-meta" id="hero-meta">
+    Spring / Summer 2026<br>
+    Loading…
+  </div>
+</section>
+
+<div class="filter-bar" id="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <!-- Category buttons injected dynamically -->
+</div>
+
+<main class="grid" id="grid">
+  <div class="state-msg">Loading products…</div>
+</main>
+
+<footer>
+  © 2026 YHWH Co. — Free shipping on orders over $200
+</footer>
+
+<script>
+  // ─── Config ───────────────────────────────────────────────────────────────
+  // Published Google Sheet → File › Share › Publish to web › CSV
+  const SHEET_CSV_URL =
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vR41Mjl-i9vD9m01CC81y0NHYl7Y51CuucSGGxpO1fCx11nD_vUCVragew5RYu9jZHYnehWQ3hOD3hG/pub?output=csv';
+
+  // ─── CSV parser (handles quoted fields with commas) ───────────────────────
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    const headers = splitCSVRow(lines[0]).map(h => h.trim().toLowerCase());
+    return lines.slice(1).map(line => {
+      const vals = splitCSVRow(line);
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
+      return obj;
+    }).filter(row => Object.values(row).some(v => v)); // skip empty rows
+  }
+
+  function splitCSVRow(row) {
+    const result = [];
+    let cur = '', inQuotes = false;
+    for (let i = 0; i < row.length; i++) {
+      const ch = row[i];
+      if (ch === '"') {
+        if (inQuotes && row[i+1] === '"') { cur += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if (ch === ',' && !inQuotes) {
+        result.push(cur); cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    result.push(cur);
+    return result;
+  }
+
+  // ─── Build a card element ─────────────────────────────────────────────────
+  function makeCard(product, index) {
+    // Expected columns (case-insensitive): name, category, sub, price, img_src, badge, colors
+    const name     = product['name']     || product['card-name']     || '';
+    const category = product['category'] || product['card-category'] || '';
+    const sub      = product['sub']      || product['card-sub']      || '';
+    const price    = product['price']    || product['card-price']    || '';
+    const imgSrc   = product['img_src']  || product['img src']       || product['image'] || product['img'] || '';
+    const badge    = product['badge']    || '';
+    const colors   = product['colors']   || product['swatches']      || '';
+
+    const article = document.createElement('article');
+    article.className = 'card';
+    article.dataset.category = category.toLowerCase();
+    article.style.animationDelay = `${0.05 + index * 0.05}s`;
+
+    // Badge markup
+    const isNew = badge.toLowerCase() === 'new';
+    const badgeHTML = badge
+      ? `<span class="badge${isNew ? ' new' : ''}">${badge}</span>`
+      : '';
+
+    // Color swatches — comma-separated hex values in the sheet
+    const swatchHTML = colors
+      ? colors.split(',').map(c =>
+          `<div class="swatch" style="background:${c.trim()}"></div>`
+        ).join('')
+      : '';
+
+    // Price formatting — add $ if not already present
+    const priceDisplay = price && !price.startsWith('$') ? `$${price}` : price;
+
+    article.innerHTML = `
+      <div class="card-img-wrap">
+        <img src="${imgSrc}" alt="${name}" loading="lazy" />
+        ${badgeHTML}
+        <div class="card-overlay">
+          <button class="quick-add">Add to Cart</button>
+        </div>
+      </div>
+      <div class="card-info">
+        <span class="card-category">${category}</span>
+        <div class="card-name">${name}</div>
+        <div class="card-sub">${sub}</div>
+        <div class="card-footer">
+          <span class="card-price">${priceDisplay}</span>
+          <div class="card-colors">${swatchHTML}</div>
+        </div>
+      </div>
+    `;
+
+    // Quick-add button feedback
+    article.querySelector('.quick-add').addEventListener('click', e => {
+      e.stopPropagation();
+      const btn = e.currentTarget;
+      btn.textContent = 'Added ✓';
+      btn.style.background = '#c8a96e';
+      setTimeout(() => {
+        btn.textContent = 'Add to Cart';
+        btn.style.background = '';
+      }, 1500);
+    });
+
+    return article;
+  }
+
+  // ─── Filter logic ─────────────────────────────────────────────────────────
+  let allCards = [];
+
+  function applyFilter(filter) {
+    allCards.forEach(card => {
+      const match = filter === 'all' || card.dataset.category === filter.toLowerCase();
+      card.style.display = match ? '' : 'none';
+    });
+  }
+
+  function buildFilterButtons(categories) {
+    const bar = document.getElementById('filter-bar');
+    // Remove existing dynamic buttons (keep "All")
+    bar.querySelectorAll('[data-filter]:not([data-filter="all"])').forEach(b => b.remove());
+
+    [...new Set(categories)].forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.filter = cat.toLowerCase();
+      btn.textContent = cat;
+      bar.appendChild(btn);
+    });
+
+    bar.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.dataset.filter);
+      });
+    });
+  }
+
+  // ─── Fetch & render ───────────────────────────────────────────────────────
+  async function loadProducts() {
+    const grid = document.getElementById('grid');
+
+    try {
+      const res = await fetch(SHEET_CSV_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      const products = parseCSV(text);
+
+      if (!products.length) throw new Error('No products found in sheet.');
+
+      grid.innerHTML = '';
+      allCards = [];
+
+      products.forEach((product, i) => {
+        const card = makeCard(product, i);
+        grid.appendChild(card);
+        allCards.push(card);
+      });
+
+      // Update hero count
+      document.getElementById('hero-meta').innerHTML =
+        `Spring / Summer 2026<br>${products.length} Product${products.length !== 1 ? 's' : ''}`;
+
+      // Build filter buttons from unique categories
+      const categories = products
+        .map(p => p['category'] || p['card-category'] || '')
+        .filter(Boolean);
+      buildFilterButtons(categories);
+
+    } catch (err) {
+      console.error('Failed to load products:', err);
+      grid.innerHTML = `<div class="state-msg">Could not load products. Please check the sheet URL or network connection.<br><small style="text-transform:none;letter-spacing:0">${err.message}</small></div>`;
+    }
+  }
+
+  loadProducts();
+</script>
+
+</body>
+</html>
